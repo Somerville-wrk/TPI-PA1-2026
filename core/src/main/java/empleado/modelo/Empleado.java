@@ -1,5 +1,7 @@
 package empleado.modelo;
 
+import empleado.exception.EmpleadoInvalidoException;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -22,7 +24,16 @@ public class Empleado {
     }
 
     public static Empleado instance(UUID id, String nombreCompleto, String legajo, LocalDate fechaIngreso, Puesto puesto, Double salario) {
-        return null;
+        validarDatosObligatorios(id, nombreCompleto, legajo, fechaIngreso, puesto, salario);
+        return new Empleado(id, nombreCompleto, legajo, fechaIngreso, puesto, salario);
+    }
+
+    private static void validarDatosObligatorios(UUID id, String nombreCompleto, String legajo, LocalDate fechaIngreso, Puesto puesto, Double salario) {
+        if (id == null || nombreCompleto == null || nombreCompleto.isBlank() ||
+                legajo == null || legajo.isBlank() || fechaIngreso == null ||
+                puesto == null || salario == null) {
+            throw new EmpleadoInvalidoException("Todos los atributos del empleado son obligatorios");
+        }
     }
 
     public UUID getId() { return id; }
