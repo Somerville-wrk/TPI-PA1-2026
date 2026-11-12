@@ -5,6 +5,8 @@ import empleado.input.CrearEmpleadoInput;
 import empleado.modelo.Empleado;
 import empleado.output.EmpleadoRepositoryPort;
 
+import java.util.UUID;
+
 public class CrearEmpleadoUseCase implements CrearEmpleadoInput {
 
     private final EmpleadoRepositoryPort empleadoRepositoryPort;
@@ -15,6 +17,17 @@ public class CrearEmpleadoUseCase implements CrearEmpleadoInput {
 
     @Override
     public Empleado crearEmpleado(CrearEmpleadoCommand command) {
-        return null;
+        empleadoRepositoryPort.existePorLegajo(command.legajo());
+
+        Empleado nuevoEmpleado = Empleado.instance(
+                UUID.randomUUID(),
+                command.nombreCompleto(),
+                command.legajo(),
+                command.fechaIngreso(),
+                command.puesto(),
+                command.salario()
+        );
+
+        return empleadoRepositoryPort.guardar(nuevoEmpleado);
     }
 }
