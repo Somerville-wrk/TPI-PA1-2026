@@ -1,5 +1,6 @@
 package empleado.usecase;
 
+import empleado.exception.EmpleadoYaExisteException;
 import empleado.input.CrearEmpleadoCommand;
 import empleado.input.CrearEmpleadoInput;
 import empleado.modelo.Empleado;
@@ -17,7 +18,9 @@ public class CrearEmpleadoUseCase implements CrearEmpleadoInput {
 
     @Override
     public Empleado crearEmpleado(CrearEmpleadoCommand command) {
-        empleadoRepositoryPort.existePorLegajo(command.legajo());
+        if (empleadoRepositoryPort.existePorLegajo(command.legajo())) {
+            throw new EmpleadoYaExisteException("Ya existe un empleado registrado con el legajo " + command.legajo());
+        }
 
         Empleado nuevoEmpleado = Empleado.instance(
                 UUID.randomUUID(),
