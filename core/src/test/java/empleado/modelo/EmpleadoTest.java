@@ -1,6 +1,9 @@
 package empleado.modelo;
 
 import empleado.exception.EmpleadoInvalidoException;
+import empleado.exception.FechaIngresoInvalidaException;
+import empleado.exception.LegajoInvalidoException;
+import empleado.exception.SalarioInvalidoException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -57,5 +60,60 @@ class EmpleadoTest {
                 Empleado.instance(id, "Juan Perez", "ABC1234", hoy, null, 500000.0));
         assertThrows(EmpleadoInvalidoException.class, () ->
                 Empleado.instance(id, "Juan Perez", "ABC1234", hoy, Puesto.ANALISTA, null));
+    }
+
+    @Test
+    void crearEmpleado_conFormatoLegajoIncorrecto_lanzaLegajoInvalidoException() {
+        UUID id = UUID.randomUUID();
+        LocalDate hoy = LocalDate.now();
+
+        assertThrows(LegajoInvalidoException.class, () ->
+                Empleado.instance(id, "Ana Gomez", "abc1234", hoy, Puesto.ANALISTA, 500000.0));
+        assertThrows(LegajoInvalidoException.class, () ->
+                Empleado.instance(id, "Ana Gomez", "AB1234", hoy, Puesto.ANALISTA, 500000.0));
+        assertThrows(LegajoInvalidoException.class, () ->
+                Empleado.instance(id, "Ana Gomez", "ABC123", hoy, Puesto.ANALISTA, 500000.0));
+        assertThrows(LegajoInvalidoException.class, () ->
+                Empleado.instance(id, "Ana Gomez", "ABC12345", hoy, Puesto.ANALISTA, 500000.0));
+    }
+
+    @Test
+    void crearEmpleado_conFechaIngresoFutura_lanzaFechaIngresoInvalidaException() {
+        UUID id = UUID.randomUUID();
+        LocalDate maniana = LocalDate.now().plusDays(1);
+
+        assertThrows(FechaIngresoInvalidaException.class, () ->
+                Empleado.instance(id, "Carlos Lopez", "XYZ9876", maniana, Puesto.SUPERVISOR, 850000.0));
+    }
+
+    @Test
+    void crearEmpleado_conSalarioInvalidoOMenorAlPiso_lanzaSalarioInvalidoException() {
+        UUID id = UUID.randomUUID();
+        LocalDate hoy = LocalDate.now();
+
+        assertThrows(SalarioInvalidoException.class, () ->
+                Empleado.instance(id, "Pedro Ruiz", "DEF4567", hoy, Puesto.ANALISTA, 0.0));
+        assertThrows(SalarioInvalidoException.class, () ->
+                Empleado.instance(id, "Pedro Ruiz", "DEF4567", hoy, Puesto.ANALISTA, -100.0));
+
+        assertThrows(SalarioInvalidoException.class, () ->
+                Empleado.instance(id, "Pedro Ruiz", "DEF4567", hoy, Puesto.ANALISTA, 499999.99));
+        assertThrows(SalarioInvalidoException.class, () ->
+                Empleado.instance(id, "Pedro Ruiz", "DEF4567", hoy, Puesto.SUPERVISOR, 799999.0));
+        assertThrows(SalarioInvalidoException.class, () ->
+                Empleado.instance(id, "Pedro Ruiz", "DEF4567", hoy, Puesto.GERENTE, 1199999.0));
+    }
+
+    @Test
+    void crearEmpleado_enLimiteExactoDePisoSalarial_creaInstanciasCorrectamente() {
+        UUID id = UUID.randomUUID();
+        LocalDate hoy = LocalDate.now();
+
+        assertDoesNotThrow(() ->
+                Empleado.instance(id, "Analista Justo", "ANA0001", hoy, Puesto.ANALISTA, 500000.0));
+        assertDoesNotThrow(() ->
+                Empleado.instance(id, "Supervisor Justo", "SUP0002", hoy, Puesto.SUPERVISOR, 800000.0));
+        assertDoesNotThrow(() ->
+                Empleado.instance(id, "Gerente Justo", "GER0003", hoy, Puesto.GERENTE, 1200000.0));
     }
 }
