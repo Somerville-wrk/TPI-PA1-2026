@@ -1,5 +1,6 @@
 package empleado.usecase;
 
+import empleado.exception.EmpleadoNoEncontradoException;
 import empleado.modelo.Empleado;
 import empleado.modelo.Puesto;
 import empleado.output.EmpleadoRepositoryPort;
@@ -47,5 +48,16 @@ class BuscarEmpleadoPorLegajoUseCaseTest {
         assertEquals("EMP1234", resultado.getLegajo());
         assertEquals("Rodolfo Gaston Somerville", resultado.getNombreCompleto());
         verify(empleadoRepositoryPort).buscarPorLegajo("EMP1234");
+    }
+
+    @Test
+    void buscarPorLegajo_cuandoEmpleadoNoExiste_lanzaEmpleadoNoEncontradoException() {
+        when(empleadoRepositoryPort.buscarPorLegajo("NOE9999"))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EmpleadoNoEncontradoException.class, () ->
+                buscarEmpleadoPorLegajoUseCase.buscarPorLegajo("NOE9999"));
+
+        verify(empleadoRepositoryPort).buscarPorLegajo("NOE9999");
     }
 }
