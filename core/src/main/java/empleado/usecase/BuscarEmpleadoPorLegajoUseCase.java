@@ -14,6 +14,6 @@ public class BuscarEmpleadoPorLegajoUseCase implements BuscarEmpleadoPorLegajoIn
 
     @Override
     public Empleado buscarPorLegajo(String legajo) {
-        return null;
+        return empleadoRepositoryPort.buscarPorLegajo(legajo).orElse(null);
     }
 }
