@@ -16,6 +16,6 @@ public class ListarEmpleadosUseCase implements ListarEmpleadosInput {
 
     @Override
     public List<Empleado> listarEmpleados() {
-        return null;
+        return empleadoRepositoryPort.obtenerTodos();
     }
 }
