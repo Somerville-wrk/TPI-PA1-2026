@@ -1,5 +1,6 @@
 package empleado.usecase;
 
+import empleado.exception.EmpleadoNoEncontradoException;
 import empleado.input.BuscarEmpleadoPorLegajoInput;
 import empleado.modelo.Empleado;
 import empleado.output.EmpleadoRepositoryPort;
@@ -14,6 +15,8 @@ public class BuscarEmpleadoPorLegajoUseCase implements BuscarEmpleadoPorLegajoIn
 
     @Override
     public Empleado buscarPorLegajo(String legajo) {
-        return empleadoRepositoryPort.buscarPorLegajo(legajo).orElse(null);
+        return empleadoRepositoryPort.buscarPorLegajo(legajo)
+                .orElseThrow(() -> new EmpleadoNoEncontradoException("No se encontro un empleado con el legajo " + legajo));
     }
 }
+
