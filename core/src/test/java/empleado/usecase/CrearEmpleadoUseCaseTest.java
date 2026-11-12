@@ -1,5 +1,6 @@
 package empleado.usecase;
 
+import empleado.exception.EmpleadoYaExisteException;
 import empleado.input.CrearEmpleadoCommand;
 import empleado.modelo.Empleado;
 import empleado.modelo.Puesto;
@@ -16,8 +17,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CrearEmpleadoUseCaseTest {
@@ -59,5 +59,24 @@ class CrearEmpleadoUseCaseTest {
 
         assertNotNull(resultado);
         assertEquals(empleadoCapturado.getId(), resultado.getId());
+    }
+
+    @Test
+    void crearEmpleado_cuandoLegajoYaExiste_lanzaEmpleadoYaExisteExceptionYNoGuarda() {
+        CrearEmpleadoCommand command = new CrearEmpleadoCommand(
+                "Juan Duplicado",
+                "DUP1111",
+                LocalDate.now().minusDays(5),
+                Puesto.ANALISTA,
+                550000.0
+        );
+
+        when(empleadoRepositoryPort.existePorLegajo("DUP1111")).thenReturn(true);
+
+        assertThrows(EmpleadoYaExisteException.class, () ->
+                crearEmpleadoUseCase.crearEmpleado(command));
+
+        verify(empleadoRepositoryPort).existePorLegajo("DUP1111");
+        verify(empleadoRepositoryPort, never()).guardar(any(Empleado.class));
     }
 }
