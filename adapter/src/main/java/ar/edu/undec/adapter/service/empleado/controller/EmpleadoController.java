@@ -4,8 +4,11 @@ import ar.edu.undec.adapter.service.empleado.mapper.EmpleadoServiceMapper;
 import ar.edu.undec.adapter.service.empleado.model.CrearEmpleadoRequest;
 import ar.edu.undec.adapter.service.empleado.model.EmpleadoResponse;
 import empleado.input.BuscarEmpleadoPorLegajoInput;
+import empleado.input.CrearEmpleadoCommand;
 import empleado.input.CrearEmpleadoInput;
 import empleado.input.ListarEmpleadosInput;
+import empleado.modelo.Empleado;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +36,9 @@ public class EmpleadoController {
 
     @PostMapping
     public ResponseEntity<EmpleadoResponse> crearEmpleado(@RequestBody CrearEmpleadoRequest request) {
-        return null;
+        CrearEmpleadoCommand command = empleadoServiceMapper.toCommand(request);
+        Empleado empleadoCreado = crearEmpleadoInput.crearEmpleado(command);
+        EmpleadoResponse response = empleadoServiceMapper.toResponse(empleadoCreado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
