@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,5 +61,27 @@ class EmpleadoRepoImplementacionTest {
 
         assertTrue(empleadoRepositoryPort.existePorLegajo("EMP1234"));
         assertFalse(empleadoRepositoryPort.existePorLegajo("NOE9999"));
+    }
+
+    @Test
+    void buscarPorLegajo_cuandoLegajoExiste_retornaOptionalConEmpleadoYVacioSiNoExiste() {
+        UUID idEsperado = UUID.randomUUID();
+        Empleado empleado = Empleado.instance(
+                idEsperado,
+                "Ana Lopez",
+                "ANA1001",
+                LocalDate.now().minusMonths(6),
+                Puesto.ANALISTA,
+                550000.0
+        );
+        empleadoRepositoryPort.guardar(empleado);
+
+        Optional<Empleado> encontrado = empleadoRepositoryPort.buscarPorLegajo("ANA1001");
+        Optional<Empleado> noEncontrado = empleadoRepositoryPort.buscarPorLegajo("NOE9999");
+
+        assertTrue(encontrado.isPresent());
+        assertEquals(idEsperado, encontrado.get().getId());
+        assertEquals("Ana Lopez", encontrado.get().getNombreCompleto());
+        assertTrue(noEncontrado.isEmpty());
     }
 }
