@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/empleados")
 public class EmpleadoController {
@@ -49,5 +51,10 @@ public class EmpleadoController {
         Empleado empleado = buscarEmpleadoPorLegajoInput.buscarPorLegajo(legajo);
         EmpleadoResponse response = empleadoServiceMapper.toResponse(empleado);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EmpleadoResponse>> listarEmpleados() {
+        return null;
     }
 }

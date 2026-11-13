@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -104,5 +105,22 @@ class EmpleadoControllerTest {
                 .andExpect(jsonPath("$.legajo").value("EMP1234"))
                 .andExpect(jsonPath("$.puesto").value("GERENTE"))
                 .andExpect(jsonPath("$.salario").value(1500000.0));
+    }
+
+    @Test
+    void listarEmpleados_cuandoExistenEmpleados_retorna200OkYListaDeResponses() throws Exception {
+        Empleado emp1 = Empleado.instance(
+                UUID.randomUUID(), "Ana Lopez", "ANA1001", LocalDate.now().minusMonths(6), Puesto.ANALISTA, 550000.0);
+        Empleado emp2 = Empleado.instance(
+                UUID.randomUUID(), "Carlos Ruiz", "CAR2002", LocalDate.now().minusYears(2), Puesto.SUPERVISOR, 900000.0);
+
+        when(listarEmpleadosInput.listarEmpleados()).thenReturn(List.of(emp1, emp2));
+
+        mockMvc.perform(get("/empleados")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].legajo").value("ANA1001"))
+                .andExpect(jsonPath("$[1].legajo").value("CAR2002"));
     }
 }
