@@ -11,6 +11,7 @@ import empleado.input.BuscarEmpleadoPorLegajoInput;
 import empleado.input.CrearEmpleadoCommand;
 import empleado.input.CrearEmpleadoInput;
 import empleado.input.ListarEmpleadosInput;
+import empleado.exception.EmpleadoNoEncontradoException;
 import empleado.modelo.Empleado;
 import empleado.modelo.Puesto;
 import org.junit.jupiter.api.Test;
@@ -166,4 +167,16 @@ class EmpleadoControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.mensaje").value("Ya existe un empleado con el legajo ING1024"));
     }
+
+    @Test
+    void buscarPorLegajo_cuandoEmpleadoNoExiste_retorna404NotFound() throws Exception {
+        when(buscarEmpleadoPorLegajoInput.buscarPorLegajo("INEXISTENTE"))
+                .thenThrow(new EmpleadoNoEncontradoException("No se encontró el empleado con legajo INEXISTENTE"));
+
+        mockMvc.perform(get("/empleados/INEXISTENTE")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.mensaje").value("No se encontró el empleado con legajo INEXISTENTE"));
+    }
+
 }
