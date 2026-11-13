@@ -5,6 +5,7 @@ import empleado.exception.EmpleadoYaExisteException;
 import empleado.exception.FechaIngresoInvalidaException;
 import empleado.exception.LegajoInvalidoException;
 import empleado.exception.SalarioInvalidoException;
+import empleado.exception.EmpleadoNoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,4 +33,11 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleEmpleadoYaExiste(EmpleadoYaExisteException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+
+    @ExceptionHandler(EmpleadoNoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleEmpleadoNoEncontrado(EmpleadoNoEncontradoException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
 }
