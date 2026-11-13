@@ -55,6 +55,10 @@ public class EmpleadoController {
 
     @GetMapping
     public ResponseEntity<List<EmpleadoResponse>> listarEmpleados() {
-        return null;
+        List<EmpleadoResponse> responses = listarEmpleadosInput.listarEmpleados()
+                .stream()
+                .map(empleadoServiceMapper::toResponse)
+                .toList();
+        return ResponseEntity.ok(responses);
     }
 }
