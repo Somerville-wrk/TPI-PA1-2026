@@ -42,6 +42,9 @@ public class EmpleadoRepoImplementacion implements EmpleadoRepositoryPort {
 
     @Override
     public List<Empleado> obtenerTodos() {
-        return List.of();
+        return empleadoCrudRepository.findAll()
+                .stream()
+                .map(empleadoDataMapper::toDomain)
+                .toList();
     }
 }
