@@ -1,9 +1,12 @@
 package ar.edu.undec.adapter.service.empleado;
 
+import ar.edu.undec.adapter.handler.GlobalExceptionHandler;
 import ar.edu.undec.adapter.service.empleado.controller.EmpleadoController;
 import ar.edu.undec.adapter.service.empleado.mapper.EmpleadoServiceMapper;
 import ar.edu.undec.adapter.service.empleado.model.CrearEmpleadoRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import empleado.exception.EmpleadoYaExisteException;
+import empleado.exception.SalarioInvalidoException;
 import empleado.input.BuscarEmpleadoPorLegajoInput;
 import empleado.input.CrearEmpleadoCommand;
 import empleado.input.CrearEmpleadoInput;
@@ -30,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmpleadoController.class)
-@Import(EmpleadoServiceMapper.class)
+@Import({EmpleadoServiceMapper.class, GlobalExceptionHandler.class})
 class EmpleadoControllerTest {
 
     @Autowired
@@ -122,5 +125,45 @@ class EmpleadoControllerTest {
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].legajo").value("ANA1001"))
                 .andExpect(jsonPath("$[1].legajo").value("CAR2002"));
+    }
+
+    @Test
+    void crearEmpleado_cuandoReglaDeNegocioEsViolada_retorna400BadRequest() throws Exception {
+        CrearEmpleadoRequest requestInvalido = new CrearEmpleadoRequest(
+                "Camila Fernandez",
+                "ING1024",
+                LocalDate.now().minusMonths(2),
+                Puesto.SUPERVISOR,
+                300000.0
+        );
+
+        when(crearEmpleadoInput.crearEmpleado(any(CrearEmpleadoCommand.class)))
+                .thenThrow(new SalarioInvalidoException("El salario no alcanza el piso del puesto"));
+
+        mockMvc.perform(post("/empleados")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestInvalido)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensaje").value("El salario no alcanza el piso del puesto"));
+    }
+
+    @Test
+    void crearEmpleado_cuandoLegajoYaExiste_retorna409Conflict() throws Exception {
+        CrearEmpleadoRequest requestDuplicado = new CrearEmpleadoRequest(
+                "Camila Fernandez",
+                "ING1024",
+                LocalDate.now().minusMonths(2),
+                Puesto.SUPERVISOR,
+                850000.0
+        );
+
+        when(crearEmpleadoInput.crearEmpleado(any(CrearEmpleadoCommand.class)))
+                .thenThrow(new EmpleadoYaExisteException("Ya existe un empleado con el legajo ING1024"));
+
+        mockMvc.perform(post("/empleados")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDuplicado)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.mensaje").value("Ya existe un empleado con el legajo ING1024"));
     }
 }
