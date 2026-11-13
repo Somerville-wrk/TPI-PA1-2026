@@ -36,7 +36,8 @@ public class EmpleadoRepoImplementacion implements EmpleadoRepositoryPort {
 
     @Override
     public Optional<Empleado> buscarPorLegajo(String legajo) {
-        return Optional.empty();
+        return empleadoCrudRepository.findByLegajo(legajo)
+                .map(empleadoDataMapper::toDomain);
     }
 
     @Override
