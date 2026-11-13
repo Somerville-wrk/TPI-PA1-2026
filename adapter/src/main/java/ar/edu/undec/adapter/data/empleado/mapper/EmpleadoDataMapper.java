@@ -8,10 +8,24 @@ import org.springframework.stereotype.Component;
 public class EmpleadoDataMapper {
 
     public EmpleadoEntity toEntity(Empleado empleado) {
-        return null;
+        return new EmpleadoEntity(
+                empleado.getId(),
+                empleado.getNombreCompleto(),
+                empleado.getLegajo(),
+                empleado.getFechaIngreso(),
+                empleado.getPuesto(),
+                empleado.getSalario()
+        );
     }
 
     public Empleado toDomain(EmpleadoEntity entity) {
-        return null;
+        return Empleado.instance(
+                entity.getId(),
+                entity.getNombreCompleto(),
+                entity.getLegajo(),
+                entity.getFechaIngreso(),
+                entity.getPuesto(),
+                entity.getSalario()
+        );
     }
 }
