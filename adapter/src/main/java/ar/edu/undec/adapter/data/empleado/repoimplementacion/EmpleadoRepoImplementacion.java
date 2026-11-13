@@ -2,6 +2,7 @@ package ar.edu.undec.adapter.data.empleado.repoimplementacion;
 
 import ar.edu.undec.adapter.data.empleado.crud.EmpleadoCrudRepository;
 import ar.edu.undec.adapter.data.empleado.mapper.EmpleadoDataMapper;
+import ar.edu.undec.adapter.data.empleado.model.EmpleadoEntity;
 import empleado.modelo.Empleado;
 import empleado.output.EmpleadoRepositoryPort;
 import org.springframework.stereotype.Repository;
@@ -28,7 +29,9 @@ public class EmpleadoRepoImplementacion implements EmpleadoRepositoryPort {
 
     @Override
     public Empleado guardar(Empleado empleado) {
-        return null;
+        EmpleadoEntity entity = empleadoDataMapper.toEntity(empleado);
+        EmpleadoEntity guardado = empleadoCrudRepository.save(entity);
+        return empleadoDataMapper.toDomain(guardado);
     }
 
     @Override
