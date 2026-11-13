@@ -45,4 +45,20 @@ class EmpleadoRepoImplementacionTest {
         assertEquals("ING1024", guardado.getLegajo());
         assertTrue(empleadoCrudRepository.findById(idGenerado).isPresent());
     }
+
+    @Test
+    void existePorLegajo_cuandoLegajoEstaRegistrado_retornaTrueYFalseSiNoExiste() {
+        Empleado empleado = Empleado.instance(
+                UUID.randomUUID(),
+                "Rodolfo Gaston Somerville",
+                "EMP1234",
+                LocalDate.now().minusYears(1),
+                Puesto.GERENTE,
+                1500000.0
+        );
+        empleadoRepositoryPort.guardar(empleado);
+
+        assertTrue(empleadoRepositoryPort.existePorLegajo("EMP1234"));
+        assertFalse(empleadoRepositoryPort.existePorLegajo("NOE9999"));
+    }
 }
