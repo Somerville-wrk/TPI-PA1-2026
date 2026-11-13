@@ -10,12 +10,12 @@ import empleado.input.ListarEmpleadosInput;
 import empleado.modelo.Empleado;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/empleados")
@@ -45,7 +45,9 @@ public class EmpleadoController {
     }
 
     @GetMapping("/{legajo}")
-    public ResponseEntity<EmpleadoResponse> buscarPorLegajo(@PathVariable String legajo) {
-        return null;
+    public ResponseEntity<EmpleadoResponse> buscarPorLegajo(@PathVariable("legajo") String legajo) {
+        Empleado empleado = buscarEmpleadoPorLegajoInput.buscarPorLegajo(legajo);
+        EmpleadoResponse response = empleadoServiceMapper.toResponse(empleado);
+        return ResponseEntity.ok(response);
     }
 }
