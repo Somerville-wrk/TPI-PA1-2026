@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/empleados")
@@ -40,5 +42,10 @@ public class EmpleadoController {
         Empleado empleadoCreado = crearEmpleadoInput.crearEmpleado(command);
         EmpleadoResponse response = empleadoServiceMapper.toResponse(empleadoCreado);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{legajo}")
+    public ResponseEntity<EmpleadoResponse> buscarPorLegajo(@PathVariable String legajo) {
+        return null;
     }
 }

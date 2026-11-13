@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -79,5 +80,29 @@ class EmpleadoControllerTest {
                 .andExpect(jsonPath("$.legajo").value("ING1024"))
                 .andExpect(jsonPath("$.puesto").value("SUPERVISOR"))
                 .andExpect(jsonPath("$.salario").value(850000.0));
+    }
+
+    @Test
+    void buscarPorLegajo_cuandoEmpleadoExiste_retorna200OkYEmpleadoResponse() throws Exception {
+        UUID idExistente = UUID.randomUUID();
+        Empleado empleadoEncontrado = Empleado.instance(
+                idExistente,
+                "Rodolfo Gaston Somerville",
+                "EMP1234",
+                LocalDate.now().minusYears(1),
+                Puesto.GERENTE,
+                1500000.0
+        );
+
+        when(buscarEmpleadoPorLegajoInput.buscarPorLegajo("EMP1234")).thenReturn(empleadoEncontrado);
+
+        mockMvc.perform(get("/empleados/EMP1234")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(idExistente.toString()))
+                .andExpect(jsonPath("$.nombreCompleto").value("Rodolfo Gaston Somerville"))
+                .andExpect(jsonPath("$.legajo").value("EMP1234"))
+                .andExpect(jsonPath("$.puesto").value("GERENTE"))
+                .andExpect(jsonPath("$.salario").value(1500000.0));
     }
 }
