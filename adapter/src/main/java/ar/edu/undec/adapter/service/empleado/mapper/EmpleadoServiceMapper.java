@@ -10,10 +10,23 @@ import org.springframework.stereotype.Component;
 public class EmpleadoServiceMapper {
 
     public CrearEmpleadoCommand toCommand(CrearEmpleadoRequest request) {
-        return null;
+        return new CrearEmpleadoCommand(
+                request.nombreCompleto(),
+                request.legajo(),
+                request.fechaIngreso(),
+                request.puesto(),
+                request.salario()
+        );
     }
 
     public EmpleadoResponse toResponse(Empleado empleado) {
-        return null;
+        return new EmpleadoResponse(
+                empleado.getId(),
+                empleado.getNombreCompleto(),
+                empleado.getLegajo(),
+                empleado.getFechaIngreso(),
+                empleado.getPuesto(),
+                empleado.getSalario()
+        );
     }
 }
