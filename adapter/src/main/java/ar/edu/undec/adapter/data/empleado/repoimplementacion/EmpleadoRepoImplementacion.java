@@ -24,7 +24,7 @@ public class EmpleadoRepoImplementacion implements EmpleadoRepositoryPort {
 
     @Override
     public boolean existePorLegajo(String legajo) {
-        return false;
+        return empleadoCrudRepository.existsByLegajo(legajo);
     }
 
     @Override
